@@ -229,6 +229,10 @@ def main() -> None:
 
 
     # TODO: Print final message that simulation completed
-   
+    print("\n========================================")
+    print("Simulation completed successfully!")
+    print("========================================")
+
+
 if __name__ == "__main__":
     main()
