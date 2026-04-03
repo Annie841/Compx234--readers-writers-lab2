@@ -79,29 +79,14 @@ class ReadersWritersMonitor:
         """
         with self.condition:
             # TODO: Replace 'pass' with your logic
-            pass
-        # Acquire the condition lock
-        with self.condition:
-         #  Decrement active_readers
+            #  Decrement active_readers
             self.active_readers -= 1
             # Print a useful log message
             print(f"[Monitor] Reader {reader_id} ends reading | Active readers: {self.active_readers}")
             # If last reader, wake waiting threads
             if self.active_readers == 0:
                 self.condition.notify_all()
-                # Increase waiting_writers before waiting
-            self.waiting_writers += 1
-            
-            # Wait while active_readers > 0 or active_writers > 0
-            while self.active_readers > 0 or self.active_writers > 0:
-                self.condition.wait()
-            
-            # 3. Update counters
-            self.waiting_writers -= 1
-            self.active_writers = 1
-            
-            # 4. Print a useful log message
-            print(f"[Monitor] Writer {writer_id} starts writing")
+                          
             
 
 
@@ -121,7 +106,21 @@ class ReadersWritersMonitor:
         """
         with self.condition:
             # TODO: Replace 'pass' with your logic
-            pass
+            # Increase waiting_writers before waiting
+            self.waiting_writers += 1
+            
+            #  Wait while active_readers > 0 or active_writers > 0
+            while self.active_readers > 0 or self.active_writers > 0:
+                self.condition.wait()
+            
+            # Update counters
+            self.waiting_writers -= 1
+            self.active_writers = 1
+            
+            # Print a useful log message
+            print(f"[Monitor] Writer {writer_id} starts writing")
+
+            
 
     def end_write(self, writer_id: int) -> None:
         """
@@ -134,7 +133,16 @@ class ReadersWritersMonitor:
         """
         with self.condition:
             # TODO: Replace 'pass' with your logic
-            pass
+            # Decrease active_writers (set to 0)
+            self.active_writers = 0
+            
+            #Print a useful log message
+            print(f"[Monitor] Writer {writer_id} ends writing")
+            
+            #Wake waiting threads
+            if self.active_readers == 0:
+                self.condition.notify_all()
+
 
 # Donot Change this
 class Reader(threading.Thread):
@@ -195,23 +203,35 @@ def main() -> None:
 
     #TODO: Create at least 3 Reader threads.
     readers = [
-        Reader(reader_id=1, monitor=monitor)
+        Reader(reader_id=1, monitor=monitor),
+        Reader(reader_id=2, monitor=monitor),
+        Reader(reader_id=3, monitor=monitor)
     ]
+    
     
     #TODO: Create at least 2 writer threads.
     writers = [
-        Writer(writer_id=1, monitor=monitor)
+    
+        Writer(writer_id=1, monitor=monitor),
+        Writer(writer_id=2, monitor=monitor)
     ]
 
     all_threads = readers + writers
     
     # TODO: Start all threads
+    for thread in all_threads:
+        thread.start()
 
     
     # TODO: Wait for all threads to finish
+    for thread in all_threads:
+        thread.join()
 
 
     # TODO: Print final message that simulation completed
+    print("\n========================================")
+    print("Simulation completed successfully!")
+    print("========================================")
 
 
 if __name__ == "__main__":
