@@ -131,6 +131,7 @@ class ReadersWritersMonitor:
         2. Print a useful log message.
         3. Wake waiting threads.
         """
+        #this code from AI
         with self.condition:
             # TODO: Replace 'pass' with your logic
             # Decrease active_writers (set to 0)
@@ -197,6 +198,7 @@ def main() -> None:
     - Join all threads.
     - Print a final message when the simulation is complete.
     """
+     #this code from AI
     random.seed(42)
 
     monitor = ReadersWritersMonitor()
